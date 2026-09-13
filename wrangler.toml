@@ -4,6 +4,11 @@ compatibility_flags = ["nodejs_compat"]
 main = ".open-next/worker.js"
 minify = true
 
+# 自定义域名
+routes = [
+  { pattern = "tv.yunet.cfd", custom_domain = true }
+]
+
 # 静态资源配置
 # Cloudflare Workers Assets 用于服务静态文件
 [assets]
@@ -13,9 +18,13 @@ binding = "ASSETS"
 # D1 数据库绑定
 [[d1_databases]]
 binding = "DB"
-database_name = "moontvplus"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_name = "tvp"
+database_id = "aef09eb6-6751-4313-835e-7b9a43dba989"
 
 [vars]
 NODE_ENV = "production"
 BUILD_TARGET = "cloudflare"
+NEXT_PUBLIC_STORAGE_TYPE = "d1"
+USERNAME = "admin"
+PASSWORD = "zxcv1111"
+NEXT_PUBLIC_SITE_NAME = "MoonTV"

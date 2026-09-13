@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { normalizeApiBaseUrl } from '@/lib/url';
 
 import { AdminConfig } from './admin.types';
+import defaultConfig from './default-config.json';
 import { setServerTmdbImageBaseUrl } from './tmdb-image-base';
 
 const BUILTIN_DANMAKU_API_BASE = 'https://mtvpls-danmu.netlify.app/87654321';
@@ -82,9 +83,9 @@ let configInitPromise: Promise<AdminConfig> | null = null;
 export function refineConfig(adminConfig: AdminConfig): AdminConfig {
   let fileConfig: ConfigFileStruct;
   try {
-    fileConfig = JSON.parse(adminConfig.ConfigFile) as ConfigFileStruct;
+    fileConfig = JSON.parse(adminConfig.ConfigFile || JSON.stringify(defaultConfig)) as ConfigFileStruct;
   } catch (e) {
-    fileConfig = {} as ConfigFileStruct;
+    fileConfig = (defaultConfig || {}) as unknown as ConfigFileStruct;
   }
 
   // 合并文件中的源信息
@@ -250,12 +251,13 @@ async function getInitConfig(
 
   // 优先从环境变量读取配置
   const envConfig = process.env.INIT_CONFIG || '';
-  const configSource = envConfig || configFile;
+  const defaultJsonStr = JSON.stringify(defaultConfig);
+  const configSource = envConfig || configFile || defaultJsonStr;
 
   try {
     cfgFile = JSON.parse(configSource) as ConfigFileStruct;
   } catch (e) {
-    cfgFile = {} as ConfigFileStruct;
+    cfgFile = (defaultConfig || {}) as unknown as ConfigFileStruct;
   }
   const hasCustomDanmakuEnv = Boolean(
     process.env.DANMAKU_API_BASE || process.env.DANMAKU_API_TOKEN
